@@ -33,8 +33,8 @@ Let's start by looking at the anatomy of a command all commands will have this f
 
 ```command_name [options] [arguments]```
 
-**Arguments** are things we want our command to act on. Usually file names or folders.
-**Options** will change the behavior of the program.
+* **Arguments** are things we want our command to act on. Usually file names or folders.
+* **Options** will change the behavior of the program.
 
 Always remember in Unix spaceing and capitalization are important. ```echo``` is not the same as ```Echo``` for example.
 Command | Description

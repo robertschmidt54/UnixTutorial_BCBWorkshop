@@ -152,6 +152,22 @@ mv TestFile.txt RenamedFile.txt
 
 * ```mv``` can be used to rename a file.
 
+### Look at file contents using ```cat```, ```less```, and ```more```
+* ```cat filename``` will print the contents of the file to the screen. If you aren't already change to the data directory and try:
+```cat SRR_Acc_List.txt``` 
+**Protip:** you can use the tab key to auto complete filenames, and directories. This will help to speed up coding.
+The output will look like:
+```
+SRR13275198
+SRR13275209
+SRR13275216
+SRR13275217
+SRR13275250
+SRR13275249
+SRR13275238
+```
+
+You will notice it may take a bit to print the entire contents of the file to the screen.
 
 Command | Description
 --------|-------------

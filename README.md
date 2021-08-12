@@ -34,9 +34,25 @@ Let's start by looking at the anatomy of a command all commands will have this f
 ```command_name [options] [arguments]```
 
 * **Arguments** are things we want our command to act on. Usually file names or folders.
-* **Options** will change the behavior of the program.
+* **Options** will change the behavior of the program. They are specified by a dash ```-``` followed by a single character or two dashes ```--``` followed by a word.
+* * for example: ```ls -l -h myFolder``` has two options specified (the -l and -h) and one argument (myFolder). 
 
-Always remember in Unix spaceing and capitalization are important. ```echo``` is not the same as ```Echo``` for example.
+**Protip:** you can sometimes combine options to save on typing: the command ```ls -lh myFolder``` is the same as the one above. You can only do this if you specify an option using the single dash ```-``` however.
+
+Always remember in Unix spaceing and capitalization matter. ```echo``` is not the same as ```Echo``` for example. Unix uses spaces to seperate arguments and options.
+
+## Essiential commands:
+Now that we know what makes a command lets start with some essientials:
+
+### List files with ```ls```
+* ```ls``` short for list lists files in the current directory (directory is just a fancy word for folder). I love it when names make sense.
+* ```ls``` does not need an argument, it defaults to the current directory, but you can always provide one and it will list all files in the folder you provide.
+* To get a list of options for this or any command we can use the command ```man``` short for manual. So to get the manual for ```ls``` we type:
+``` man ls```
+
+
+
+
 Command | Description
 --------|-------------
 ls \<directory\> | Lists all files in the current directory. If used without an argument lists files in current directory.

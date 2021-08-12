@@ -152,7 +152,7 @@ mv TestFile.txt RenamedFile.txt
 
 * ```mv``` can be used to rename a file.
 
-### Look at file contents using ```cat```, ```less```, and ```more```
+### Look at file contents using ```cat```, ```head```, ```tail```,  ```less```, and ```more```
 * ```cat filename``` will print the contents of the file to the screen. If you aren't already change to the data directory and try:
 ```cat SRR_Acc_List.txt``` 
 **Protip:** you can use the tab key to auto complete filenames, and directories. This will help to speed up coding.
@@ -167,7 +167,54 @@ SRR13275249
 SRR13275238
 ```
 
-You will notice it may take a bit to print the entire contents of the file to the screen.
+* ```head``` and ```tail``` are used to look at the first few lines or last few lines of a file. 
+* The ```-n``` option can be used to customize the number of lines displayed. The default is 10. 
+
+You will notice it may take a bit to print the entire contents of some larger files to the screen.
+* That's where ```less``` and ```more``` come in. They are built in file navigators allowing us to look through larger files that don't fit well on a single screen.
+* Lets look at one of the fastq files in the ```RawSequenceData``` directory
+``` less RawSequenceData/SRR13275198.fastq```
+
+This opens up the fastq file which looks like: 
+```
+@SRR13275198.1 1 length=58
+AGTCAAGCCTCACGAGCAATTAGTATTGGTCAGCTTCACATATCACTATGCTTCCACA
++SRR13275198.1 1 length=58
+6AEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+@SRR13275198.2 2 length=58
+ATGCATACCCACGCCATGAATGGTCACTTCACCATTTTTAGGGCCTTCAATGCTTACA
++SRR13275198.2 2 length=58
+/A<EEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEA
+@SRR13275198.3 3 length=58
+AAACAGTACCCTGTTTGCCTTTTTCTTTACCTGCGATCACGATAACCTGATCGCCTTT
++SRR13275198.3 3 length=58
+/<6EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEE
+@SRR13275198.4 4 length=58
+GAGCCTAAATATCCAGACAATATTCCAGAACCAGATGAAATAGAGGTCGAAGACCTAA
++SRR13275198.4 4 length=58
+<AAEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEE/EEEEAEEEEEAEE/AEEEE
+@SRR13275198.5 5 length=58
+TCGGTTTCGGGTACGATTCCTGTGTAACTGAAGCTTAGAGACTTTTCCTGGAAGCATG
++SRR13275198.5 5 length=58
+<EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEE
+@SRR13275198.6 6 length=58
+ATTTGTAAAGCGGCAGAACTTGCGACGACGGTAAAAACGTGCCATTGATGTTCTCCTT
++SRR13275198.6 6 length=58
+<<</EEEAEEEEEEEEEEEEAEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+@SRR13275198.7 7 length=58
+GTGCACTAGCAACGCTGTCAATTGCAGAAATTTGTGGCATACCGATACCAGCCACAAT
++SRR13275198.7 7 length=58
+6/EEEEEEEEEEAAEEEEEEEE/EEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEE
+@SRR13275198.8 8 length=58
+```
+
+You can move around using the up and down arrow keys. You can search for words using /, ```Shift + g``` will get you to the end of the file, and '''g''' will  bring you to the beginning of the file. 
+
+```more``` is just another file navigator similar to ```less``` but with less functionality. We won't cover it here, but feel free to experiment on your own!
+
+
+## Ok, now on to the Advanced Stuff
+
 
 Command | Description
 --------|-------------

@@ -44,11 +44,19 @@ Always remember in Unix spaceing and capitalization matter. ```echo``` is not th
 ## Essiential commands:
 Now that we know what makes a command lets start with some essientials:
 
+### Figure out what a command does with ```man```
+* I put this one first because ```man``` can be used to remind ourselves what each of the following commands do, and the options aviable.
+* To use it just type:
+* * ```man <command_name>```
+* And you will be taken to a manual page for the command.
+
 ### List files with ```ls```
 * ```ls``` short for list lists files in the current directory (directory is just a fancy word for folder). I love it when names make sense.
 * ```ls``` does not need an argument, it defaults to the current directory, but you can always provide one and it will list all files in the folder you provide.
-* To get a list of options for this or any command we can use the command ```man``` short for manual. So to get the manual for ```ls``` we type:
+* To get a list of options for this or any command remember we can use the command ```man```.
+*   So to get the manual for ```ls``` we type:
 ``` man ls```
+and hit enter.
 
 ### Find out where you are with ```pwd```
 * ```pwd``` is short for "Print Working Directory" it will print the current working directory to the screen. 
@@ -58,6 +66,11 @@ Now that we know what makes a command lets start with some essientials:
 * ```cd``` will change the directory you are currently working in. 
 * unlike the other two commands we've learned ```cd``` needs an argument: the directory you want to change to.
 * let's change to the ```data``` directory: ```cd data```
+* Now we want to go back to our previous directory to do this we use ```cd ..```
+* The ```..``` means 'go up one level'
+* There is also ```.``` which is short for the current directory. So ```cd .``` will not do anything.
+* There is a short hand for your home directory too: ```~```
+* * ```cd ~``` will take you back to you home folder no mater where you are.
 
 #### A note on paths and directory trees:
 In Unix documentation you will often see reference to "paths" to a file. What this is asking for is the list of folders you need to go through to get to that file. Unix file paths are formated like this:
@@ -66,8 +79,64 @@ In Unix documentation you will often see reference to "paths" to a file. What th
 
 There are two important parts of the directory to note:
 * The Root denoated by that starting slash ```/``` is the top most directory in your computer. Important files are stored here, and you should probably avoid doing things here if you don't know what you are doing. 
-* Your ```home``` directory. It may or may not be called 'home', often it will be your user name. It is the top most folder that is techincally yours. 
+* Your ```home``` directory. It may or may not be called 'home', often it will be your user name. It is the top most folder that is techincally yours. It is also the directory you start in when you connectted to hpc-class.
 
+### Make new folders with ```mkdir```
+* ```mkdir``` will make a new folder in the current directory.
+* * Example: ```mkdir testDir```. Now if you use ```ls``` you should see a new directory called testDir. You can feel free to change to that directory now.
+
+### Make new files with ```touch```
+* ```touch File.txt``` will create a new empty file called 'File.txt'. 
+* Note that this file will be empty you can use ```ls -lh``` to verify it is in fact empty. You can use ```man ls``` if you are unsure what the l and h mean.
+* You can specify a path if you want to make a file in a different directory:
+* * ```touch folder/File.txt```
+
+### Delete files with ```rm```
+* ```rm``` short for remove, allows us to delete files. 
+* Note that the process is irreversable. Once deleted files can not be recovered.
+* **Always make sure you know what you are deleting.**
+* ```rm``` just removes files, we need to specify the option ```-r``` to remove directories.
+* Example:
+```
+mkdir testDir
+ls
+cd testDir
+ls
+touch MyFile.txt
+ls -lh
+rm MyFile.txt
+ls
+cd ..
+rm -r testDir
+ls
+```
+We have just combined many of the commands we've seen to do something entirely pointless: create a directory called 'testDir' list the current files and folders to confirm testDir was made, change to testDir, list the empty contents of testDir, make an empty file call MyFile.txt, list the contents again to ensure the touch command went through, then removed that file, confirmed the deletion, change directories back to our previous directory, and delete testDir. 
+
+Trust me we will get to some more interesting stuff later.
+
+### move, rename, and copy files with ```mv``` and ```cp```
+* ```mv``` and ```cp``` both move files.
+* ```mv``` will delete the original file, while ```cp``` will keep it.
+Let's see an example:
+```
+mkdir testDir #Yes we are doing this again.
+cd testDir
+mkdir subDir
+touch TestFile.txt
+ls
+cp TestFile.txt subDir/
+ls
+ls subDir/
+rm subDir/TestFile.txt
+ls subDir/
+mv TestFile.txt subDir/TestFile.txt
+ls
+ls subDir/
+mv subDir/TestFile.txt
+mv TestFile.txt RenamedFile.txt
+````
+
+* ```mv``` can be used to rename a file.
 Command | Description
 --------|-------------
 ls \<directory\> | Lists all files in the current directory. If used without an argument lists files in current directory.

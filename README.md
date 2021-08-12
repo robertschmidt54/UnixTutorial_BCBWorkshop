@@ -50,8 +50,16 @@ Now that we know what makes a command lets start with some essientials:
 * * ```man <command_name>```
 * And you will be taken to a manual page for the command.
 
+### Print Things to The Screen using ```echo```
+* ```echo``` will print something to the screen.
+* Let's run our first command:
+* * ```echo Hello World!```
+
+This will just print the phrase "Hello World!" to the screen. Easy right?
+
+
 ### List files with ```ls```
-* ```ls``` short for list lists files in the current directory (directory is just a fancy word for folder). I love it when names make sense.
+* ```ls``` short for list lists files in the current directory. I love it when names make sense.
 * ```ls``` does not need an argument, it defaults to the current directory, but you can always provide one and it will list all files in the folder you provide.
 * To get a list of options for this or any command remember we can use the command ```man```.
 *   So to get the manual for ```ls``` we type:
@@ -81,21 +89,27 @@ There are two important parts of the directory to note:
 * The Root denoated by that starting slash ```/``` is the top most directory in your computer. Important files are stored here, and you should probably avoid doing things here if you don't know what you are doing. 
 * Your ```home``` directory. It may or may not be called 'home', often it will be your user name. It is the top most folder that is techincally yours. It is also the directory you start in when you connectted to hpc-class.
 
+
+
+## Commands to Mess with Files:
+
 ### Make new folders with ```mkdir```
 * ```mkdir``` will make a new folder in the current directory.
 * * Example: ```mkdir testDir```. Now if you use ```ls``` you should see a new directory called testDir. You can feel free to change to that directory now.
+
 
 ### Make new files with ```touch```
 * ```touch File.txt``` will create a new empty file called 'File.txt'. 
 * Note that this file will be empty you can use ```ls -lh``` to verify it is in fact empty. You can use ```man ls``` if you are unsure what the l and h mean.
 * You can specify a path if you want to make a file in a different directory:
 * * ```touch folder/File.txt```
+* ```touch``` will just make empty files, we will get to making files with stuff in them a little later.
 
 ### Delete files with ```rm```
 * ```rm``` short for remove, allows us to delete files. 
 * Note that the process is irreversable. Once deleted files can not be recovered.
 * **Always make sure you know what you are deleting.**
-* ```rm``` just removes files, we need to specify the option ```-r``` to remove directories.
+* ```rm``` just removes files, we need to specify the option ```-r``` to remove directories. If you don't believe me check ```man rm```, or just try removing a directory with ```rm```
 * Example:
 ```
 mkdir testDir
@@ -137,6 +151,8 @@ mv TestFile.txt RenamedFile.txt
 ````
 
 * ```mv``` can be used to rename a file.
+
+
 Command | Description
 --------|-------------
 ls \<directory\> | Lists all files in the current directory. If used without an argument lists files in current directory.

@@ -50,8 +50,23 @@ Now that we know what makes a command lets start with some essientials:
 * To get a list of options for this or any command we can use the command ```man``` short for manual. So to get the manual for ```ls``` we type:
 ``` man ls```
 
+### Find out where you are with ```pwd```
+* ```pwd``` is short for "Print Working Directory" it will print the current working directory to the screen. 
+* it can be run without an argument.
 
+### Change directories with ```cd```
+* ```cd``` will change the directory you are currently working in. 
+* unlike the other two commands we've learned ```cd``` needs an argument: the directory you want to change to.
+* let's change to the ```data``` directory: ```cd data```
 
+#### A note on paths and directory trees:
+In Unix documentation you will often see reference to "paths" to a file. What this is asking for is the list of folders you need to go through to get to that file. Unix file paths are formated like this:
+
+```/home/folder/folder2/another_folder/yet_another_folder/bob/the_file_you_want.extension```
+
+There are two important parts of the directory to note:
+* The Root denoated by that starting slash ```/``` is the top most directory in your computer. Important files are stored here, and you should probably avoid doing things here if you don't know what you are doing. 
+* Your ```home``` directory. It may or may not be called 'home', often it will be your user name. It is the top most folder that is techincally yours. 
 
 Command | Description
 --------|-------------

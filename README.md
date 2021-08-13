@@ -801,3 +801,4 @@ Researches from Tufts University grew cultures of *Acinetobacter baumannii* ATCC
 
 ## Starting out: acquiring data
 
+To start with we should 

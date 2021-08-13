@@ -786,5 +786,18 @@ You maybe thinking "All this Unix stuff is awesome, but Rob I'm a biologist. How
 
 This is a fair question.
 
-One of the most common tasks the modern day biologist faces is the 
+One of the most common tasks the modern day biologist faces is the analysis of RNA Sequencing (RNA-Seq) data (or any sequencing data for that matter). In this tutorial I hope to bring you from data acquisition all the way through the generation of a count matrix you can use as input into your analysis pipelines of choice.
+
+The National Center for Biotechnology Information ([NCBI](https://www.ncbi.nlm.nih.gov/), the ones who host the BLAST databases and tools, and PubMed) host an archive of next generation sequencing reads called the Sequencing Read Archive (SRA). There you can find literally tons of data for practice and other projects. This tutorial will focus on generating a count matrix from a small subset of data from project [PRJNA686448](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA686448) "Predicting The Emergence of Antibiotic Resistance Through Multi-Omics Approaches And Immune- System-Surveillance".
+
+Researches from Tufts University grew cultures of *Acinetobacter baumannii* ATCC 17978 in the presence of several different antibiotics, and took samples at 30 minutes and 90 minutes after antibiotic introduction. They then isolated the total mRNA from the samples and sequenced sequenced. The resulting files are unpaired 58 bp reads. We will do the following:
+1. download the raw sequencing files from SRA using the ```sratoolkit``` developed by NCBI for this purpose. 
+2. download the *Acinetobacter baumannii* reference genome (found [here](https://www.ncbi.nlm.nih.gov/genome/?term=Acinetobacter+baumannii+ATCC+17978)), and the genome annotation file in gff format.
+3. Run ```fastqc``` and check the quality of our reads.
+4. Align the reads to the *Acinetobacter baumannii* ATCC 17978 reference genome using ```bowtie2``` and ```samtools```.
+5. Count the number of reads mapping to each gene using ```htseq-count``` and store the resulting count matrix in a file for later analysis.
+
+**Fun Fact**: it is entirely doable to run this locally (that is on your own computer not the cluster) as bacterial genomes tend to be small compared to eukaroytic genomes, and bowtie2 is pretty quick, and wont take up much memory. However, I will assume you have access to one of Iowa State's computational clusters. If you wish to do this on your own machine you will also need to install every tool I mention. To do this I can not recomend the package manager [conda](https://docs.conda.io/en/latest/miniconda.html) enough.
+
+## Starting out: acquiring data
 

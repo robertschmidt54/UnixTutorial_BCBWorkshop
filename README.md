@@ -10,6 +10,9 @@ This work is heavily based off my previous Unix tutorial found [here](https://gi
 # Before Starting:
 ## If you are off campus:
 You will need to turn on the VPN to access Iowa State's clusters. Instructions to install and configure the VPN can be found [here](https://iastate.service-now.com/it?id=kb_article&sysparm_article=KB0011105&sys_kb_id=f7ea47ca1b75341032aa99fe034bcb6c) if you haven't already installed it. Make sure to do this before following any of the next steps.
+
+* Even if you plan to attend in person it is a good idea to install the VPN, that way you will be ready to work on the clusters from anywhere there's an internet connection. You will not have to turn it on when you're on the campus network though.
+
 ## If you are on Mac or Linux:
 Open terminal and type the following commands. 
 You can copy using ```command C``` and right click to paste the command into the terminal, or just type it.
@@ -34,6 +37,36 @@ You should have installed PuTTY before coming to this workshop. If you have not 
 
 
 Enter your netID in place of '\<your netID\>' and hit open. When prompted enter your password, and you should be good to go.
+
+Once you are connected type the following into the PuTTY window:
+
+```
+git clone https://github.com/robertschmidt54/UnixTutorial_BCBWorkshop/
+cd UnixTutorial_BCBWorkshop
+```
+
+and you are now ready to start 🥳.
+
+### If you are on Windows 8.1 or above you can use Powershell
+Powershell is Windows answer to the terminal in MacOS. It allows you to run many of the commands you learn today naitively on Windows without the need to install anything or faf about with settings! It comes installed by default on all modern instances of Windows, and the ssh functionality is even on by default.
+
+You can find powershell by searching for it in your programs. Once you've got it running run the following:
+
+```
+ssh <netID>@hpc-class.its.iastate.edu
+```
+
+where /<netID/> is replaced by your actual net ID.
+* Note the terminal will **NOT** display anything as you type your password. Don't worry it is being typed.
+
+Once you are connected (it may ask for authentication, just type 'y' or 'yes') you can enter the following:
+
+```
+git clone https://github.com/robertschmidt54/UnixTutorial_BCBWorkshop/
+cd UnixTutorial_BCBWorkshop
+```
+
+You are now ready to start 🥳.
  
 # Let's get started: Why do we even want to learn about Unix?
 Linux/Unix has become the standard operating system for high performance computing clusters (HPCs) all around the globe. If you want the power of an HPC you need to learn the fundamentals of Unix. Plus almost all of the most popular bioinformatics tools are used on the command line. Trust me it may look intimidating at first, but I hope you will find it is not as hard as you thought.
@@ -226,10 +259,40 @@ You can move around using the up and down arrow keys. You can search for words u
 
 ```more``` is just another file navigator similar to ```less``` but with less functionality. We won't cover it here, but feel free to experiment on your own!
 
+## Redirect ```>``` and append ```>>```
+* We've seen how to make empty files up until now, but what if I want to actually put text inside that file? 
+* Redirect ```>``` can be used to redirect the output of any unix command to a file. The syntax is:
+```command > file.extension```
+* For example let's redirect the output of ```echo``` to a file:
+```
+touch myFile.txt
+echo "Hello World!" > myFile.txt
+```
+* Redirect will overwrite any existing data in the file. Yes, you can use it to overwrite an existing file. Just be careful with it.
+* Append ```>>``` on the other hand will append to a file.
+* It has the same syntax as redirect.
+* Ex:
+```
+echo "Stuff" >> myFile.txt
+```
+
+## Pipe ```|``` and ```grep```
+* Pipe ```|``` (```shift + \``` the key just above the enter key on most keyboards.) let's you take the output of one command and use it as the input to another.
+* ```grep``` lets you search walls of text for key words (and more, but let's focus on keyword search for now). 
+* * ```grep``` matches line by line and returns matching lines. 
+* Example using both pipe and grep:
+```
+cat data/list.txt | grep spam
+```
+* We have just printed the contents of list.txt (```cat```), and then searched the output for the keyword "spam", and found it.
+* Pipe is very useful for quickly running small pipelines. 
+
+There are many more useful unix commands that we don't have time to cover. I have included in this tutorial a cheat sheet of many of the most useful unix commands.
+You will not be able to access the cheat sheet on the cluster.
 
 ## Ok, now on to the Advanced Stuff
 
-
+But first a little review:
 Command | Description
 --------|-------------
 ls \<directory\> | Lists all files in the current directory. If used without an argument lists files in current directory.
@@ -276,7 +339,7 @@ I should remind you: **rm -r can be a very dangerous command** Always be sure yo
 # Introduction to Programming with Unix
 We have learned how to run commands in Unix one at a time via the commandline. However, most of the time we would like to run multiple commands in sequence. 
 
-You learned during the last workshop about the pipe ```|``` operator that allows us to chain commands together. This is useful, but will quickly becomes cumbersome when you have more than a handfull of commands you need to run on multiple files. Enter bash scripting!
+We've just learned about the Pipe ```|``` operator that allows us to chain commands together. This is useful, but will quickly becomes cumbersome when you have more than a handfull of commands you need to run on multiple files. Enter bash scripting!
 
 Programming in bash is just like programming in other languages. So the skills you pick up here can easily transfer to other languages as well.
 
@@ -318,9 +381,11 @@ Congratulations you've just written your first program!
 
 Let's take some time to break down what we just did. The first line: ```#!bin/bash``` is required at the beginning of every bash script. It tells the computer what program to use to interpret our instructions. 
 
-You have already seen the ```echo``` command from the last workshop. As a reminder echo prints whatever follows it to the screen. In our case it will be the string "Hello World!".
+You have already seen the ```echo``` command. 
 
 You may have noticed the lines that begin with ```#``` didn't print or mess anything up. This is because they are what are known as comments. Comments are ignored by computers, and are for us humans to know what the code is doing.
+
+Comments are important, please comment your code.
 
 Let's try something a little more complicated open up your helloWorld.sh script and add the following to the end:
 
@@ -712,3 +777,14 @@ I am required by law to tell you:
 Remember to use Slurm to run your commands on the cluster. Try to avoid using the interactive nodes to run your scripts. Use the interactive nodes to trouble shoot and test.
 
 **Never run the command `rm -rf /`!**
+
+# The Ultimate Test: RNA-Seq Analysis
+
+We likely will not have the time to do the following during the workshop. That's ok though, this tutorial will remain on my git hub for you to reference anytime you want.
+
+You maybe thinking "All this Unix stuff is awesome, but Rob I'm a biologist. How can I apply what I've learned to biology?"
+
+This is a fair question.
+
+One of the most common tasks the modern day biologist faces is the 
+

@@ -30,8 +30,8 @@ And you are ready to begin 🥳.
 ### Connect using PuTTY
 You should have installed PuTTY before coming to this workshop. If you have not it can be downloaded and installed [here](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html). Go ahead and open it now. You'll see a window that looks like this:
 
-![A putty Window](Images/PuTTY.png) 
-*Ceci n'est pas un PuTTY Window*
+![A putty Window](Images/PuTTY.png)
+\n*Ceci n'est pas un PuTTY Window*
 
 Enter your netID in place of '\<your netID\>' and hit open. When prompted enter your password, and you should be good to go.
  

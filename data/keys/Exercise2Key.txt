@@ -1,0 +1,14 @@
+##########################
+----Key for Exercise 2 part 1-----
+
+a="Jess"
+b="Jack"
+c="Jenn"
+
+echo "Many ${a}es, ${b}s, and ${c}s say bye!"
+
+
+##########################
+----Key for Exercise 2 part 2-------
+
+echo "I am $(whoami) and today is $(date)"

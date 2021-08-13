@@ -1,0 +1,27 @@
+#####Exercise 3######
+----Part 1-----
+
+for name in Jess Jack Jenn
+do
+	echo "Hello $name"
+done
+
+
+----Part 2------
+list=$(head -n 3)
+
+for name in $list
+do
+	echo "Hello $name"
+done
+
+
+---Part 3-----
+mkdir Output
+
+names=$(cat names.txt)
+
+for name in $names
+do
+	echo $name > Output/${name}.txt
+done

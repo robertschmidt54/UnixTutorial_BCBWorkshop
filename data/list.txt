@@ -1,0 +1,12 @@
+apple
+Apple
+orange
+pear
+peach
+peach
+spam
+foo
+bar
+paypa
+dog
+Cat

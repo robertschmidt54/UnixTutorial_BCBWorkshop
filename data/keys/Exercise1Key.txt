@@ -1,0 +1,14 @@
+###########################
+----Key to exercise 1------
+
+a="Jess"
+b="Jack"
+c="Jenn"
+
+echo "$a, $b, and $c say hi!"
+
+
+
+
+
+

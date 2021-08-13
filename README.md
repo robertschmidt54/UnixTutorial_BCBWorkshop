@@ -7,20 +7,34 @@ This is an introduction to the Unix envrironment given on August 16, 2021 as par
 This work is heavily based off my previous Unix tutorial found [here](https://github.com/robertschmidt54/AdvancedUnixTutorial). 
 
 
-# Before Starting Run These Commands:
-You can copy using '''ctrl + C''' ('''Command C''' on Macs) and right click to paste the command into the terminal, or just type it.
+# Before Starting:
+## If you are off campus:
+You will need to turn on the VPN to access Iowa State's clusters. Instructions to install and configure the VPN can be found [here](https://iastate.service-now.com/it?id=kb_article&sysparm_article=KB0011105&sys_kb_id=f7ea47ca1b75341032aa99fe034bcb6c) if you haven't already installed it. Make sure to do this before following any of the next steps.
+## If you are on Mac or Linux:
+Open terminal and type the following commands. 
+You can copy using ```command C``` and right click to paste the command into the terminal, or just type it.
 ```
 ssh <netID>@hpc-class.its.iastate.edu
 ```
+When prompted enter you ISU netID (the first part of your ISU email address) and password. 
+* Note the terminal will **NOT** display anything as you type your password. Don't worry it is being typed.
+
+Then enter the following:
 ```
 git clone https://github.com/robertschmidt54/UnixTutorial_BCBWorkshop/
 cd UnixTutorial_BCBWorkshop
 ```
+And you are ready to begin 🥳.
 
-## Or connect using PuTTY:
-  ### TODO: Add putty instructions.
-  
+## If you are on Windows
+### Connect using PuTTY
+You should have installed PuTTY before coming to this workshop. If you have not it can be downloaded and installed [here](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html). Go ahead and open it now. You'll see a window that looks like this:
 
+![A putty Window](Images/PuTTY.png)
+*Ceci n'est pas un PuTTY Window*
+
+Enter your netID in place of '<your netID> and hit open. When prompted enter your password, and you should be good to go.
+ 
 # Let's get started: Why do we even want to learn about Unix?
 Linux/Unix has become the standard operating system for high performance computing clusters (HPCs) all around the globe. If you want the power of an HPC you need to learn the fundamentals of Unix. Plus almost all of the most popular bioinformatics tools are used on the command line. Trust me it may look intimidating at first, but I hope you will find it is not as hard as you thought.
 

@@ -33,7 +33,7 @@ You should have installed PuTTY before coming to this workshop. If you have not 
 ![A putty Window](Images/PuTTY.png)
 *Ceci n'est pas un PuTTY Window*
 
-Enter your netID in place of '<your netID> and hit open. When prompted enter your password, and you should be good to go.
+Enter your netID in place of '\<your netID\>' and hit open. When prompted enter your password, and you should be good to go.
  
 # Let's get started: Why do we even want to learn about Unix?
 Linux/Unix has become the standard operating system for high performance computing clusters (HPCs) all around the globe. If you want the power of an HPC you need to learn the fundamentals of Unix. Plus almost all of the most popular bioinformatics tools are used on the command line. Trust me it may look intimidating at first, but I hope you will find it is not as hard as you thought.

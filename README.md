@@ -855,14 +855,14 @@ The following table gives us some meta data to go with these accession numbers, 
 
 Accession | Antibiotic | Time (min)
 ----------|------------|----------
-SRR13275198 ciprofloxacin 30
-SRR13275209 ciprofloxacin 30
-SRR13275216 ciprofloxacin 30
-SRR13275217 ciprofloxacin 30
-SRR13275250 None 30
-SRR13275249 None 30
-SRR13275238 None 30
-SRR13275227None 30
+SRR13275198 | ciprofloxacin | 30
+SRR13275209 | ciprofloxacin | 30
+SRR13275216 | ciprofloxacin | 30
+SRR13275217 | ciprofloxacin | 30
+SRR13275250 | None | 30
+SRR13275249 | None | 30
+SRR13275238 | None | 30
+SRR13275227 | None | 30
 These accession numbers can be used with NCBI's proprietary program ```sratoolkit``` to directly download a raw sequence file from the SRA. That program is installed on Iowa States clusers and can be accessed via the commands:
 
 ```

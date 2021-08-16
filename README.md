@@ -853,8 +853,8 @@ SRR13275227
 ```
 The following table gives us some meta data to go with these accession numbers, just so we can keep track of what we are doing:
 
-Accession Antibiotic Time (min)
----------|----------|----------
+Accession | Antibiotic | Time (min)
+----------|------------|----------
 SRR13275198 ciprofloxacin 30
 SRR13275209 ciprofloxacin 30
 SRR13275216 ciprofloxacin 30

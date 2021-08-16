@@ -863,6 +863,7 @@ SRR13275250 | None | 30
 SRR13275249 | None | 30
 SRR13275238 | None | 30
 SRR13275227 | None | 30
+
 These accession numbers can be used with NCBI's proprietary program ```sratoolkit``` to directly download a raw sequence file from the SRA. That program is installed on Iowa States clusers and can be accessed via the commands:
 
 ```
@@ -874,6 +875,29 @@ module load sratoolkit/2.8.0
 ```
 module spider sratoolkit/2.8.0
 ```
-As the name suggests ```sratoolkit``` is a tool kit containing many different tools for working with the SRA. The one we are most interested in now is called ```fastq-dump``` it downloads a fastq formated sequence file given an SRA accession number. Unfortunately it only takes one accession number. We have 8.
+As the name suggests ```sratoolkit``` is a tool kit containing many different tools for working with the SRA. The one we are most interested in now is called ```fastq-dump``` it downloads a fastq formated sequence file given an SRA accession number. Unfortunately it only takes one accession number. We have 8. Lucky for us we remember how to use a ```for``` loop and parameter expansion! Take a minute and try to figure out how you would code this up on your own before looking at my answer. 
+
+The following answer is just one of many potential answers. If what you came up with doesn't match don't worry. As long as you downloaded the files, and nothing went wrong you are good to go!
+
+```
+for acc in $( ../SRR_Acc_List.txt )
+do
+   fastq-dump ${acc}
+done
+```
+
+We should now have 8 fastq files in our data directory!
+
+One of the first steps of any RNA Seq analysis (besides getting the data) is to check the quality of the sequences. There is a very popular tool to do this: ```fastqc``` It checks a lot of different things and produces a handy html report to summarize it all. Like ```fastq-dump``` ```fastqc``` works on one file at a time. So the command will likely be similar. Here is one form of the command that will work:
+
+```
+for fq in $( ls data/*.fastq)
+do
+  fastqc -o FastQCOut/ ${fq}
+done
+```
+This assumes you run from the top directory and have a folder called ```FastqOut```. 
+
+To view the report you just generated you will need to download it to your own computer (or faf about with visualization settings in the cluster).  To download a file from the cluster we can use the ```scp``` command. 
 
 

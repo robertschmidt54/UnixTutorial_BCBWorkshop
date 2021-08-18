@@ -910,12 +910,12 @@ If you want to download an entire folder/directory you can use the ```-r``` opti
 
 Here is an example of a fastqc report. 
 
-[FastQC_Report]Images/FastQCReport.png
+![FastQC_Report]Images/FastQCReport.png
 
 You will have one for each sample. There is a tool called MultiQC that will let you combine the reports of multiple fastqc runs together. I will leave the implementation of this command as an exercise for the student however. Feel free to google and remember you can see if the cluster has it installed using ```module spider```.
 
 Now that we have convienced ourselves the sequences are of good(ish) quality we can now attempt to align them to our reference genome. 
-* **Note**: it is very important to check the quality of your data before doing the alignments. How to account for common issues with RNA seq data is beyond the scope of this tutorial. Remember to always check and look up how to account for potential issues.
+ * **Note**: it is very important to check the quality of your data before doing the alignments. How to account for common issues with RNA seq data is beyond the scope of this              tutorial. Remember to always check and look up how to account for potential issues.
 
 So if you are on the cluster we need to load a few modules:
 
@@ -924,14 +924,14 @@ module load bowtie2
 module load samtools
 ```
 
-```bowtie2``` is an aligner and will take our sequences and align them to a genome. That is to say it will find the 'best' (for a very specific definitionn of the word best) place in the genome those reads fit. It is quick, and efficeint, but may not always be the best aligner to choose for a given situation. 
+```bowtie2``` is an aligner and will take our sequences and align them to a genome. That is to say it will find the 'best' (for a very specific definitionn of the word best) place in the genome those reads fit. It is quick, and efficeint, but may not always be the best aligner to choose for a given situation. ```samtoools``` is a set of tools for working with alignment files in sam format. We can use it to compress, sort, and index our alignment files. Bowtie2 outputs alignments in sam format so this works out nicely.
 
 To use bowtie2 we need an indexed reference genome. An index is a set of files bowtie2 uses to quickly parse the genome file. To get an index the command ```bowtie2-build``` is used like this:
 
 ```
 bowtie2-build <path to reference genome file (in fasta format)> <path and name of index>
 ```
-What I mean by <path and name of index> is that we need to specifiy not only where we want to put the index but also what we want to name it. bowtie2 will use this name later. So to work with our data we can use the command:
+What I mean by \<path and name of index\> is that we need to specifiy not only where we want to put the index but also what we want to name it. bowtie2 will use this name later. So to work with our data we can use the command:
  
  ```
  mkdir RefGenome/Index
@@ -976,6 +976,27 @@ Usage:
 
  ```
 We note the top line: ```bowtie2 [options]* -x <bt2-idx> {-1 <m1> -2 <m2> | -U <r> | --interleaved <i> | -b <bam>} [-S <sam>]``` breaks down to we need to:
-   1. specify options, these can be found in the help section.
+   1. Specify options, these can be found in the help section.
    2. Specify input files using either the paried (-1 -2) options, single (-U), interleaved (--interleaved), or bam input. 
    3. Specify output file in sam format. If this is not specified bowtie2 will just print the output to screen.
+
+We aren't going to worry about options right now (if you are doing this for real a good option to read up on is ```--sensitive```). We know from our data source these are unpaired reads, and because we want to compress our output we won't be specifying an output file in sam format. 
+
+ Bowtie2 can only handle one file at a time, so this is a good oportunity to use the ```for``` loop construction. We are also letting it output to the console letting us get practice with the pipe ```|```. So the command is:
+
+```
+mkdir BowtieOut
+for fq in $( ls data/*.fastq )
+do
+  ID=$( basename ${fq%%.fastq} )
+  bowtie2 -x RefGenome/Index/AB_Ref -U ${fq} | samtools view -b | samtools sort > BowtieOut/${ID}.bam
+  samtools index BowtieOut/${ID}.bam
+done
+```
+
+Ok so what's going on here? If we look at the ```for``` loop the first line is defining a variable called "ID" which is the output of a command called ```basename``` basename just gives the name of the file without the directory path. The construciton ```${fq%%.fastq}``` is unix's way of saying "Remove the .fastq on the end". So ID will be one of the accession numbers we saw before, since each fastq file is just ```accession_number.fastq```. This kind of construction is very useful to keep sample names consistent when you are running a bunch of tools.
+
+The next line is our bowtie2 command: we are using the index we constructed before, and passing our fastq file as the input. Because we didn't specify the ```-S``` option bowtie will print it's output to the screen. We can capture that output with the pipe ```|```, and use that as input into our first samtools command ```view``` view just lets us see the sam file, however the -b option will actually compress that data into what is known as a bam format. This takes up much less space than a regular sam file, and you should always compress your alignment outputs this way. We can then take the output of that and bring it into the command sort which will sort our alignment file by position in the reference genome (so posistion 1 on chromosome 1 will appear first followed by posisition 2 etc.). 
+
+Many tools expect sorted bam files as inputs, they also sometimes want indexed bam files (to make it easier to parse them) and that's what the last command is doing. **Note** you need to sort before you index.
+   

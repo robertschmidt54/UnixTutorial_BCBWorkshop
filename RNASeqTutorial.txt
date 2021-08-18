@@ -1,0 +1,123 @@
+# The Ultimate Test: RNA-Seq Analysis
+
+We likely will not have the time to do the following during the workshop. That's ok though, this tutorial will remain on my git hub for you to reference anytime you want.
+
+You maybe thinking "All this Unix stuff is awesome, but Rob I'm a biologist. How can I apply what I've learned to biology?"
+
+This is a fair question.
+
+One of the most common tasks the modern day biologist faces is the analysis of RNA Sequencing (RNA-Seq) data (or any sequencing data for that matter). In this tutorial I hope to bring you from data acquisition all the way through the generation of a count matrix you can use as input into your analysis pipelines of choice.
+
+The National Center for Biotechnology Information ([NCBI](https://www.ncbi.nlm.nih.gov/), the ones who host the BLAST databases and tools, and PubMed) host an archive of next generation sequencing reads called the Sequencing Read Archive (SRA). There you can find literally tons of data for practice and other projects. This tutorial will focus on generating a count matrix from a small subset of data from project [PRJNA686448](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA686448) "Predicting The Emergence of Antibiotic Resistance Through Multi-Omics Approaches And Immune- System-Surveillance".
+
+Researches from Tufts University grew cultures of *Acinetobacter baumannii* ATCC 17978 in the presence of several different antibiotics, and took samples at 30 minutes and 90 minutes after antibiotic introduction. They then isolated the total mRNA from the samples and sequenced sequenced. The resulting files are unpaired 58 bp reads. We will do the following:
+1. download the raw sequencing files from SRA using the ```sratoolkit``` developed by NCBI for this purpose. 
+2. download the *Acinetobacter baumannii* reference genome (found [here](https://www.ncbi.nlm.nih.gov/genome/?term=Acinetobacter+baumannii+ATCC+17978)), and the genome annotation file in gff format.
+3. Run ```fastqc``` and check the quality of our reads.
+4. Align the reads to the *Acinetobacter baumannii* ATCC 17978 reference genome using ```bowtie2``` and ```samtools```.
+5. Count the number of reads mapping to each gene using ```htseq-count``` and store the resulting count matrix in a file for later analysis.
+
+**Fun Fact**: it is entirely doable to run this locally (that is on your own computer not the cluster) as bacterial genomes tend to be small compared to eukaroytic genomes, and bowtie2 is pretty quick, and wont take up much memory. The bottleneck will be counting reads in the features. But on a decent laptop (16 GB RAM, > 2.0 GHz processor) it should run within an hour or so. However, I will assume you have access to one of Iowa State's computational clusters. If you wish to do this on your own machine you will also need to install every tool I mention. To do this I can not recomend the package manager [conda](https://docs.conda.io/en/latest/miniconda.html) enough. It will save you a lot of headaches.
+
+## Starting out: acquiring data
+
+To start with we should create an interactive session on the cluster. First connect to the cluster like we did at the start of this workshop. Then enter the following:
+
+```
+srun --nodes 1 --tasks 8 --mem 16G --time 14:00:00 --pty bash
+```
+
+We have just requested a node on the HPC class cluster with 8 CPUs and 16 GB of RAM. Should be enough to run our pipeline in a decently short time. This will also let us get past the 5 GB limit of our home directory, and let us experiment with all these commands. 
+
+Let's get the data. We will start with the genome and annotation file. Let's make a new project directory called ```RNASeq``` and change to it. Then we can make a new directory called ```RefGenome``` and change to it. 
+
+The files can be found [here](https://www.ncbi.nlm.nih.gov/genome/?term=Acinetobacter+baumannii+ATCC+17978). You will want to right click on the download link (```Ctrl + left click``` on Macs if you don't have a right click) for the genome and GFF annotation file and click copy link address. The picture below shows the two links you want to click. Assuming NCBI has not changed their site.
+
+![AB_RefGenome](Images/AB_RefGenome.png)
+
+Once you have copied one of the links go back to the Unix terminal and enter the command ```wget``` then right click to copy the URL. Hit enter and you should download the file directly to the cluster. 
+
+If you are having issues with this I have the commands you should use in full here:
+
+```
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/116/925/GCF_002116925.1_ASM211692v1/GCF_002116925.1_ASM211692v1_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/116/925/GCF_002116925.1_ASM211692v1/GCF_002116925.1_ASM211692v1_genomic.gff.gz
+```
+We should now have two files in our RefGenome directory: the reference genome in fasta format (.fna) and the annotation file in GFF format (.gff). They are both compressed using gzip, and thus if we try to look at them with ```cat``` or ```less``` we will just get gibberish. Instead we can use the command ```zcat``` to uncompress and view the files. Go ahead and give it a try. If you can read the output you're doing it correctly. Here's what the first few lines of GFF file will look like:
+
+```
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build ASM211692v1
+#!genome-build-accession NCBI_Assembly:GCF_002116925.1
+#!annotation-date 05/17/2021 05:50:27
+#!annotation-source NCBI RefSeq
+##sequence-region NZ_CP015121.1 1 3980886
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=470
+NZ_CP015121.1   RefSeq  region  1       3980886 .       +       .     ID=NZ_CP015121.1:1..3980886;Dbxref=taxon:470;Is_circular=true;Name=ANONYMOUS;collected-by=USAMRIID;collection-date=2015;country=USA;gbkey=Src;genome=chromosome;mol_type=genomic DNA;nat-host=Homo sapiens;strain=ab736
+```
+
+Let's go ahead and return to our top directory.
+
+Now we need to get some data. We can make a new directory to contain all this data. Let's call it ```data```. Then change to that directory. I have taken the liberity of including a file containing the accession numbers of the data we need. In fact we saw it earlier in this tutorial it was SRR_Acc_List.txt. I have the contents here if you need it:
+```
+SRR13275198
+SRR13275209
+SRR13275216
+SRR13275217
+SRR13275250
+SRR13275249
+SRR13275238
+SRR13275227
+```
+The following table gives us some meta data to go with these accession numbers, just so we can keep track of what we are doing:
+
+Accession | Antibiotic | Time (min)
+----------|------------|----------
+SRR13275198 | ciprofloxacin | 30
+SRR13275209 | ciprofloxacin | 30
+SRR13275216 | ciprofloxacin | 30
+SRR13275217 | ciprofloxacin | 30
+SRR13275250 | None | 30
+SRR13275249 | None | 30
+SRR13275238 | None | 30
+SRR13275227 | None | 30
+
+These accession numbers can be used with NCBI's proprietary program ```sratoolkit``` to directly download a raw sequence file from the SRA. That program is installed on Iowa States clusers and can be accessed via the commands:
+
+```
+module load dafoam/1.0
+module load sratoolkit/2.8.0
+```
+```sratoolkit``` is an example of a module that needs other modules loaded in to run. To check you can do a module spider for the name of the command, then another module spider for the specific version like this:
+
+```
+module spider sratoolkit/2.8.0
+```
+As the name suggests ```sratoolkit``` is a tool kit containing many different tools for working with the SRA. The one we are most interested in now is called ```fastq-dump``` it downloads a fastq formated sequence file given an SRA accession number. Unfortunately it only takes one accession number. We have 8. Lucky for us we remember how to use a ```for``` loop and parameter expansion! Take a minute and try to figure out how you would code this up on your own before looking at my answer. 
+
+The following answer is just one of many potential answers. If what you came up with doesn't match don't worry. As long as you downloaded the files, and nothing went wrong you are good to go!
+
+```
+for acc in $( ../SRR_Acc_List.txt )
+do
+   fastq-dump ${acc}
+done
+```
+
+We should now have 8 fastq files in our data directory!
+
+One of the first steps of any RNA Seq analysis (besides getting the data) is to check the quality of the sequences. There is a very popular tool to do this: ```fastqc``` It checks a lot of different things and produces a handy html report to summarize it all. Like ```fastq-dump``` ```fastqc``` works on one file at a time. So the command will likely be similar. Here is one form of the command that will work:
+
+```
+for fq in $( ls data/*.fastq)
+do
+  fastqc -o FastQCOut/ ${fq}
+done
+```
+This assumes you run from the top directory and have a folder called ```FastqOut```. 
+
+To view the report you just generated you will need to download it to your own computer (or faf about with visualization settings in the cluster).  To download a file from the cluster we can use the ```scp``` command. 
+
+

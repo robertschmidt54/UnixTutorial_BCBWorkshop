@@ -788,9 +788,11 @@ This is a fair question.
 
 One of the most common tasks the modern day biologist faces is the analysis of RNA Sequencing (RNA-Seq) data (or any sequencing data for that matter). In this tutorial I hope to bring you from data acquisition all the way through the generation of a count matrix you can use as input into your analysis pipelines of choice.
 
-The National Center for Biotechnology Information ([NCBI](https://www.ncbi.nlm.nih.gov/), the ones who host the BLAST databases and tools, and PubMed) host an archive of next generation sequencing reads called the Sequencing Read Archive (SRA). There you can find literally tons of data for practice and other projects. This tutorial will focus on generating a count matrix from a small subset of data from project [PRJNA686448](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA686448) "Predicting The Emergence of Antibiotic Resistance Through Multi-Omics Approaches And Immune- System-Surveillance".
+For those not in the know: RNA-Seq is when you isolate the total mRNA content of an organim, and sequence it using next generation sequencing methods. We are usually interested in just the mRNA as that is what is ultimately translated into proteins. We can then use bioinformatics to map those reads back to the organisms genome and count them. This allows us to do many cool things like figure out where genes are, or to what extent these genes are expressed under certian circumstances. 
 
-Researches from Tufts University grew cultures of *Acinetobacter baumannii* ATCC 17978 in the presence of several different antibiotics, and took samples at 30 minutes and 90 minutes after antibiotic introduction. They then isolated the total mRNA from the samples and sequenced sequenced. The resulting files are unpaired 58 bp reads. We will do the following:
+The National Center for Biotechnology Information ([NCBI](https://www.ncbi.nlm.nih.gov/), the ones who host the BLAST databases and tools, and PubMed) host an archive of next generation sequencing reads called the Sequence Read Archive (SRA). There you can find literally tons of data for practice and other projects. This tutorial will focus on generating a count matrix from a small subset of data from project [PRJNA686448](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA686448) "Predicting The Emergence of Antibiotic Resistance Through Multi-Omics Approaches And Immune-System-Surveillance".
+
+Researches from Tufts University grew cultures of *Acinetobacter baumannii* ATCC 17978 in the presence of several different antibiotics, and took samples at 30 minutes and 90 minutes after antibiotic introduction. They then isolated the total mRNA from the samples and sequenced it. The resulting files are unpaired 58 bp reads. We will do the following:
 1. download the raw sequencing files from SRA using the ```sratoolkit``` developed by NCBI for this purpose. 
 2. download the *Acinetobacter baumannii* reference genome (found [here](https://www.ncbi.nlm.nih.gov/genome/?term=Acinetobacter+baumannii+ATCC+17978)), and the genome annotation file in gff format.
 3. Run ```fastqc``` and check the quality of our reads.
@@ -807,7 +809,7 @@ To start with we should create an interactive session on the cluster. First conn
 srun --nodes 1 --tasks 8 --mem 16G --time 14:00:00 --pty bash
 ```
 
-We have just requested a node on the HPC class cluster with 8 CPUs and 16 GB of RAM. Should be enough to run our pipeline in a decently short time. This will also let us get past the 5 GB limit of our home directory, and let us experiment with all these commands. 
+We have just requested a node on the HPC class cluster with 8 CPUs and 16 GB of RAM. Should be enough to run our pipeline in a decently short time. This will also let us get past the 5 GB limit of our home directory, and let us experiment with all these commands. You can always play around with the memory and number of CPUs to see how that helps scale our work.
 
 Let's get the data. We will start with the genome and annotation file. Let's make a new project directory called ```RNASeq``` and change to it. Then we can make a new directory called ```RefGenome``` and change to it. 
 
@@ -898,6 +900,18 @@ done
 ```
 This assumes you run from the top directory and have a folder called ```FastqOut```. 
 
-To view the report you just generated you will need to download it to your own computer (or faf about with visualization settings in the cluster).  To download a file from the cluster we can use the ```scp``` command. 
+To view the report you just generated you will need to download it to your own computer (or faf about with visualization settings in the cluster).  To download a file from the cluster we can use the ```scp``` command. Simply type:
+
+```
+scp <user name>@hpc-class.its.iastate.edu:<path to file of interest> <path to local destination>
+```
+
+If you want to download an entire folder/directory you can use the ```-r``` option. Also remember if you want to download to your current folder remember how to use the ```.```.
+
+Here is an example of a fastqc report. 
+
+[FastQC_Report]Images/FastQCReport.png
+
+You will have one for each sample. There is a tool called MultiQC that will let you combine the reports of multiple fastqc runs together. I will leave the implementation of this command as an exercise for the student however. Feel free to google and remember you can see if the cluster has it installed using ```module spider```
 
 

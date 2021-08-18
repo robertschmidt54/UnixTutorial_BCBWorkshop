@@ -912,6 +912,70 @@ Here is an example of a fastqc report.
 
 [FastQC_Report]Images/FastQCReport.png
 
-You will have one for each sample. There is a tool called MultiQC that will let you combine the reports of multiple fastqc runs together. I will leave the implementation of this command as an exercise for the student however. Feel free to google and remember you can see if the cluster has it installed using ```module spider```
+You will have one for each sample. There is a tool called MultiQC that will let you combine the reports of multiple fastqc runs together. I will leave the implementation of this command as an exercise for the student however. Feel free to google and remember you can see if the cluster has it installed using ```module spider```.
 
+Now that we have convienced ourselves the sequences are of good(ish) quality we can now attempt to align them to our reference genome. 
+* **Note**: it is very important to check the quality of your data before doing the alignments. How to account for common issues with RNA seq data is beyond the scope of this tutorial. Remember to always check and look up how to account for potential issues.
 
+So if you are on the cluster we need to load a few modules:
+
+```
+module load bowtie2
+module load samtools
+```
+
+```bowtie2``` is an aligner and will take our sequences and align them to a genome. That is to say it will find the 'best' (for a very specific definitionn of the word best) place in the genome those reads fit. It is quick, and efficeint, but may not always be the best aligner to choose for a given situation. 
+
+To use bowtie2 we need an indexed reference genome. An index is a set of files bowtie2 uses to quickly parse the genome file. To get an index the command ```bowtie2-build``` is used like this:
+
+```
+bowtie2-build <path to reference genome file (in fasta format)> <path and name of index>
+```
+What I mean by <path and name of index> is that we need to specifiy not only where we want to put the index but also what we want to name it. bowtie2 will use this name later. So to work with our data we can use the command:
+ 
+ ```
+ mkdir RefGenome/Index
+ bowtie2-build RefGenome/GCF_002116925.1_ASM211692v1_genomic.fna.gz RefGenome/Index/AB_Ref
+ ```
+This assumes we run the command from our top directory. So what have we done? The first line made a folder inside of the ```RefGenome``` folder called "Index". We then ran ```bowtie2-build``` to use the genome file: GCF_002116925.1_ASM211692v1_genomic.fna.gz to make a reference with the name "AB_Ref". 
+ 
+ If you ```ls``` the Index folder you should see something like this:
+```
+ AB_Ref.1.bt2  AB_Ref.2.bt2  AB_Ref.3.bt2  AB_Ref.4.bt2  AB_Ref.rev.1.bt2  AB_Ref.rev.2.bt2
+```
+ These are the index files bowtie2 produced. 
+ 
+ Ok now we need to actually perform the alignment. Bowtie2 is a little complicated you can see how complicated by using the command:
+ 
+ ```
+ bowtie2 -h
+ ```
+ 
+ There's a lot of settings you should look at and understand, but for this we only care about the inputs:
+ 
+ ```
+ Bowtie 2 version 2.3.5.1 by Ben Langmead (langmea@cs.jhu.edu, www.cs.jhu.edu/~langmea)
+Usage:
+  bowtie2 [options]* -x <bt2-idx> {-1 <m1> -2 <m2> | -U <r> | --interleaved <i> | -b <bam>} [-S <sam>]
+
+  <bt2-idx>  Index filename prefix (minus trailing .X.bt2).
+             NOTE: Bowtie 1 and Bowtie 2 indexes are not compatible.
+  <m1>       Files with #1 mates, paired with files in <m2>.
+             Could be gzip'ed (extension: .gz) or bzip2'ed (extension: .bz2).
+  <m2>       Files with #2 mates, paired with files in <m1>.
+             Could be gzip'ed (extension: .gz) or bzip2'ed (extension: .bz2).
+  <r>        Files with unpaired reads.
+             Could be gzip'ed (extension: .gz) or bzip2'ed (extension: .bz2).
+  <i>        Files with interleaved paired-end FASTQ/FASTA reads
+             Could be gzip'ed (extension: .gz) or bzip2'ed (extension: .bz2).
+  <bam>      Files are unaligned BAM sorted by read name.
+  <sam>      File for SAM output (default: stdout)
+
+  <m1>, <m2>, <r> can be comma-separated lists (no whitespace) and can be
+  specified many times.  E.g. '-U file1.fq,file2.fq -U file3.fq'.
+
+ ```
+We note the top line: ```bowtie2 [options]* -x <bt2-idx> {-1 <m1> -2 <m2> | -U <r> | --interleaved <i> | -b <bam>} [-S <sam>]``` breaks down to we need to:
+   1. specify options, these can be found in the help section.
+   2. Specify input files using either the paried (-1 -2) options, single (-U), interleaved (--interleaved), or bam input. 
+   3. Specify output file in sam format. If this is not specified bowtie2 will just print the output to screen.

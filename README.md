@@ -1016,3 +1016,15 @@ htseq-count
 
 The ```-i``` option specifies what the ID attribute in the GFF file is. Not all GFF files use the same ID structure because reasons. So to get around that htseq lets you specify. To determine what to put there look at the last column of the GFF data, and the first atribute of that large string. Here is a picture attempting to show where to find it. In our case it is "ID" sometimes it might be "transcript_id" or "gene_id", but it will be consistent within a given GFF file.
    
+![GFFExample](Images/GFFExample.png)
+
+Finally there's the ```-t``` option. This option specifies what kind of feature we want to count. This could be things like "CDS" or "gene". You will find it in the thrid column of the GFF file. 
+
+```htseq-count``` can take a list of bam files or be run on one bam file at a time. We will run it on a list of bam files to get one file for viewing. We will count the sequences inside of the gene features of our GFF file.
+
+```
+htseq-count -i ID -t gene -f bam $( ls BowtieOut/*.bam ) RefGenome/GCF_002116925.1_ASM211692v1_genomic.gff.gz
+```
+
+And that's it. We have gone from data acquisition to generating a count matrix we can use for further analysis. Now in principal you can do this analysis directly in bash. I would however recommend against that as other programming languages like R or Python have already built libraries for this kind of analysis. But that's for another tutorial.
+

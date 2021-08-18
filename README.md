@@ -815,7 +815,7 @@ Let's get the data. We will start with the genome and annotation file. Let's mak
 
 The files can be found [here](https://www.ncbi.nlm.nih.gov/genome/?term=Acinetobacter+baumannii+ATCC+17978). You will want to right click on the download link (```Ctrl + left click``` on Macs if you don't have a right click) for the genome and GFF annotation file and click copy link address. The picture below shows the two links you want to click. Assuming NCBI has not changed their site.
 
-![AB_RefGenome](Images/AB_RefGenome.png)
+![AB_RefGenome](Images/AB_RefGenomePage.png)
 
 Once you have copied one of the links go back to the Unix terminal and enter the command ```wget``` then right click to copy the URL. Hit enter and you should download the file directly to the cluster. 
 

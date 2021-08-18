@@ -2,7 +2,7 @@
 ## Rob Schmidt
 ## August 16, 2021
 
-This is an introduction to the Unix envrironment given on August 16, 2021 as part of the BCB GSOs programming workshop series.
+This is an introduction to the Unix envrironment given on August 16, 2021 as part of the BCB GSO's programming workshop series.
 
 This work is heavily based off my previous Unix tutorial found [here](https://github.com/robertschmidt54/AdvancedUnixTutorial). 
 
@@ -193,7 +193,7 @@ ls subDir/
 mv TestFile.txt subDir/TestFile.txt
 ls
 ls subDir/
-mv subDir/TestFile.txt
+mv subDir/TestFile.txt .
 mv TestFile.txt RenamedFile.txt
 ````
 
@@ -219,7 +219,7 @@ SRR13275238
 
 You will notice it may take a bit to print the entire contents of some larger files to the screen.
 * That's where ```less``` and ```more``` come in. They are built in file navigators allowing us to look through larger files that don't fit well on a single screen.
-* Lets look at one of the fastq files in the ```RawSequenceData``` directory
+* Lets look at one of the fastq files in the ```RawSequenceData``` directory:
 ``` less RawSequenceData/SRR13275198.fastq```
 
 This opens up the fastq file which looks like: 
@@ -255,12 +255,12 @@ GTGCACTAGCAACGCTGTCAATTGCAGAAATTTGTGGCATACCGATACCAGCCACAAT
 @SRR13275198.8 8 length=58
 ```
 
-You can move around using the up and down arrow keys. You can search for words using /, ```Shift + g``` will get you to the end of the file, and '''g''' will  bring you to the beginning of the file. 
+You can move around using the up and down arrow keys. You can search for words using /, ```Shift + G``` will get you to the end of the file, and ```G``` will  bring you to the beginning of the file. 
 
-```more``` is just another file navigator similar to ```less``` but with less functionality. We won't cover it here, but feel free to experiment on your own!
+```more``` is just another file navigator similar to ```less```, but with less functionality. We won't cover it here, but feel free to experiment on your own!
 
 ## Redirect ```>``` and append ```>>```
-* We've seen how to make empty files up until now, but what if I want to actually put text inside that file? 
+* Up until now we've only seen how to make empty files, but what if I want to actually put text inside that file? 
 * Redirect ```>``` can be used to redirect the output of any unix command to a file. The syntax is:
 ```command > file.extension```
 * For example let's redirect the output of ```echo``` to a file:
@@ -277,7 +277,7 @@ echo "Stuff" >> myFile.txt
 ```
 
 ## Pipe ```|``` and ```grep```
-* Pipe ```|``` (```shift + \``` the key just above the enter key on most keyboards.) let's you take the output of one command and use it as the input to another.
+* Pipe ```|``` (```shift + \``` the key just above the enter key on most keyboards.) lets you take the output of one command and use it as the input to another.
 * ```grep``` lets you search walls of text for key words (and more, but let's focus on keyword search for now). 
 * * ```grep``` matches line by line and returns matching lines. 
 * Example using both pipe and grep:
@@ -288,7 +288,7 @@ cat data/list.txt | grep spam
 * Pipe is very useful for quickly running small pipelines. 
 
 There are many more useful unix commands that we don't have time to cover. I have included in this tutorial a cheat sheet of many of the most useful unix commands.
-You will not be able to access the cheat sheet on the cluster.
+You will not be able to access the cheat sheet on the cluster, you can however always download this repository.
 
 ## Ok, now on to the Advanced Stuff
 
@@ -316,7 +316,7 @@ ex:
 
 ```ls -lh``` lists all files in directory and their sizes.
 
-```head -n 5 \<file\>``` prints first 5 lines of a file.
+```head -n 5 <file>``` prints first 5 lines of a file.
 
 You can always see a list of options for a given command by entering:
 
@@ -788,10 +788,11 @@ This is a fair question.
 
 One of the most common tasks the modern day biologist faces is the analysis of RNA Sequencing (RNA-Seq) data (or any sequencing data for that matter). In this tutorial I hope to bring you from data acquisition all the way through the generation of a count matrix you can use as input into your analysis pipelines of choice.
 
-For those not in the know: RNA-Seq is when you isolate the total mRNA content of an organim, and sequence it using next generation sequencing methods. We are usually interested in just the mRNA as that is what is ultimately translated into proteins. We can then use bioinformatics to map those reads back to the organisms genome and count them. This allows us to do many cool things like figure out where genes are, or to what extent these genes are expressed under certian circumstances. 
+For those not in the know: RNA-Seq is when you isolate the total mRNA content of an organim, and sequence it using next generation sequencing methods. The result is a bunch of files containing a lot of short reads representing a random sample of the total mRNA content of the organism. We can then use bioinformatics to map those reads back to the organisms genome and count them. This allows us to do many cool things like figure out where genes are, or to what extent these genes are expressed under certian circumstances. The later of which is the most common application of this method. 
 
-The National Center for Biotechnology Information ([NCBI](https://www.ncbi.nlm.nih.gov/), the ones who host the BLAST databases and tools, and PubMed) host an archive of next generation sequencing reads called the Sequence Read Archive (SRA). There you can find literally tons of data for practice and other projects. This tutorial will focus on generating a count matrix from a small subset of data from project [PRJNA686448](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA686448) "Predicting The Emergence of Antibiotic Resistance Through Multi-Omics Approaches And Immune-System-Surveillance".
+The National Center for Biotechnology Information ([NCBI](https://www.ncbi.nlm.nih.gov/), the ones who host the BLAST databases and tools, and PubMed) host an archive of next generation sequencing reads called the Sequence Read Archive (SRA). There you can find literally tons of data for practice and other projects. This tutorial will focus on generating a count matrix from a small subset of data from project [PRJNA686448](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA686448) entitled "Predicting The Emergence of Antibiotic Resistance Through Multi-Omics Approaches And Immune-System-Surveillance".
 
+## Bit of Background on the Data:
 Researches from Tufts University grew cultures of *Acinetobacter baumannii* ATCC 17978 in the presence of several different antibiotics, and took samples at 30 minutes and 90 minutes after antibiotic introduction. They then isolated the total mRNA from the samples and sequenced it. The resulting files are unpaired 58 bp reads. We will do the following:
 1. download the raw sequencing files from SRA using the ```sratoolkit``` developed by NCBI for this purpose. 
 2. download the *Acinetobacter baumannii* reference genome (found [here](https://www.ncbi.nlm.nih.gov/genome/?term=Acinetobacter+baumannii+ATCC+17978)), and the genome annotation file in gff format.
@@ -799,11 +800,26 @@ Researches from Tufts University grew cultures of *Acinetobacter baumannii* ATCC
 4. Align the reads to the *Acinetobacter baumannii* ATCC 17978 reference genome using ```bowtie2``` and ```samtools```.
 5. Count the number of reads mapping to each gene using ```htseq-count``` and store the resulting count matrix in a file for later analysis.
 
+I have chosen a subset of data that includes the 4 trials treated with the antibiotic ciprofloxacin for 30 min and the 4 non-drug controls also at 30 min. The metadata is summarized in the following table: 
+
+Accession | Antibiotic | Time (min)
+----------|------------|----------
+SRR13275198 | ciprofloxacin | 30
+SRR13275209 | ciprofloxacin | 30
+SRR13275216 | ciprofloxacin | 30
+SRR13275217 | ciprofloxacin | 30
+SRR13275250 | None | 30
+SRR13275249 | None | 30
+SRR13275238 | None | 30
+SRR13275227 | None | 30
+
 **Fun Fact**: it is entirely doable to run this locally (that is on your own computer not the cluster) as bacterial genomes tend to be small compared to eukaroytic genomes, and bowtie2 is pretty quick, and wont take up much memory. The bottleneck will be counting reads in the features. But on a decent laptop (16 GB RAM, > 2.0 GHz processor) it should run within an hour or so. However, I will assume you have access to one of Iowa State's computational clusters. If you wish to do this on your own machine you will also need to install every tool I mention. To do this I can not recomend the package manager [conda](https://docs.conda.io/en/latest/miniconda.html) enough. It will save you a lot of headaches.
 
-## Starting out: acquiring data
+## Starting Out: Acquiring Data
 
-To start with we should create an interactive session on the cluster. First connect to the cluster like we did at the start of this workshop. Then enter the following:
+To start with we should create an interactive session on the cluster. This will let us enter commands and get feedback in real time. It is good to do this to test the validity of your scripts before sending them to run on the cluster using ```sbatch```.
+
+First connect to the cluster like we did at the start of this workshop. Then enter the following:
 
 ```
 srun --nodes 1 --tasks 8 --mem 16G --time 14:00:00 --pty bash
@@ -825,7 +841,7 @@ If you are having issues with this I have the commands you should use in full he
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/116/925/GCF_002116925.1_ASM211692v1/GCF_002116925.1_ASM211692v1_genomic.fna.gz
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/116/925/GCF_002116925.1_ASM211692v1/GCF_002116925.1_ASM211692v1_genomic.gff.gz
 ```
-We should now have two files in our RefGenome directory: the reference genome in fasta format (.fna) and the annotation file in GFF format (.gff). They are both compressed using gzip, and thus if we try to look at them with ```cat``` or ```less``` we will just get gibberish. Instead we can use the command ```zcat``` to uncompress and view the files. Go ahead and give it a try. If you can read the output you're doing it correctly. Here's what the first few lines of GFF file will look like:
+We should now have two files in our RefGenome directory: the reference genome in fasta format (.fna) and the annotation file in GFF format (.gff). They are both compressed using gzip (hence the ```.gz``` extension), and thus if we try to look at them with ```cat``` or ```less``` we will just get gibberish. Instead we can use the command ```zcat``` to uncompress and view the files. Go ahead and give it a try. If you can read the output you're doing it correctly. Here's what the first few lines of GFF file will look like:
 
 ```
 ##gff-version 3
@@ -840,9 +856,9 @@ We should now have two files in our RefGenome directory: the reference genome in
 NZ_CP015121.1   RefSeq  region  1       3980886 .       +       .     ID=NZ_CP015121.1:1..3980886;Dbxref=taxon:470;Is_circular=true;Name=ANONYMOUS;collected-by=USAMRIID;collection-date=2015;country=USA;gbkey=Src;genome=chromosome;mol_type=genomic DNA;nat-host=Homo sapiens;strain=ab736
 ```
 
-Let's go ahead and return to our top directory.
+Let's go ahead and return to our project directory: ```cd ..```.
 
-Now we need to get some data. We can make a new directory to contain all this data. Let's call it ```data```. Then change to that directory. I have taken the liberity of including a file containing the accession numbers of the data we need. In fact we saw it earlier in this tutorial it was SRR_Acc_List.txt. I have the contents here if you need it:
+Now we need to get some sequence data. We can make a new directory to contain all this data. Let's call it ```data```. Then change to that directory. I have taken the liberity of including a file containing the accession numbers of the data we need. In fact we saw it earlier in this tutorial it was SRR_Acc_List.txt. I have the contents here if you need it:
 ```
 SRR13275198
 SRR13275209
@@ -853,18 +869,8 @@ SRR13275249
 SRR13275238
 SRR13275227
 ```
-The following table gives us some meta data to go with these accession numbers, just so we can keep track of what we are doing:
 
-Accession | Antibiotic | Time (min)
-----------|------------|----------
-SRR13275198 | ciprofloxacin | 30
-SRR13275209 | ciprofloxacin | 30
-SRR13275216 | ciprofloxacin | 30
-SRR13275217 | ciprofloxacin | 30
-SRR13275250 | None | 30
-SRR13275249 | None | 30
-SRR13275238 | None | 30
-SRR13275227 | None | 30
+In reality however likely you will be given data by your PI or need to download it directly from the SRA.
 
 These accession numbers can be used with NCBI's proprietary program ```sratoolkit``` to directly download a raw sequence file from the SRA. That program is installed on Iowa States clusers and can be accessed via the commands:
 
@@ -890,6 +896,7 @@ done
 
 We should now have 8 fastq files in our data directory!
 
+## Quality Control
 One of the first steps of any RNA Seq analysis (besides getting the data) is to check the quality of the sequences. There is a very popular tool to do this: ```fastqc``` It checks a lot of different things and produces a handy html report to summarize it all. Like ```fastq-dump``` ```fastqc``` works on one file at a time. So the command will likely be similar. Here is one form of the command that will work:
 
 ```
@@ -898,7 +905,7 @@ do
   fastqc -o FastQCOut/ ${fq}
 done
 ```
-This assumes you run from the top directory and have a folder called ```FastqOut```. 
+This assumes you run from the project directory and have a folder called ```FastqOut```. 
 
 To view the report you just generated you will need to download it to your own computer (or faf about with visualization settings in the cluster).  To download a file from the cluster we can use the ```scp``` command. Simply type:
 
@@ -914,6 +921,7 @@ Here is an example of a fastqc report.
 
 You will have one for each sample. There is a tool called MultiQC that will let you combine the reports of multiple fastqc runs together. I will leave the implementation of this command as an exercise for the student however. Feel free to google and remember you can see if the cluster has it installed using ```module spider```.
 
+## Alignment
 Now that we have convienced ourselves the sequences are of good(ish) quality we can now attempt to align them to our reference genome. 
  * **Note**: it is very important to check the quality of your data before doing the alignments. How to account for common issues with RNA seq data is beyond the scope of this              tutorial. Remember to always check and look up how to account for potential issues.
 
@@ -924,7 +932,9 @@ module load bowtie2
 module load samtools
 ```
 
-```bowtie2``` is an aligner and will take our sequences and align them to a genome. That is to say it will find the 'best' (for a very specific definitionn of the word best) place in the genome those reads fit. It is quick, and efficeint, but may not always be the best aligner to choose for a given situation. ```samtoools``` is a set of tools for working with alignment files in sam format. We can use it to compress, sort, and index our alignment files. Bowtie2 outputs alignments in sam format so this works out nicely.
+```bowtie2``` is an aligner and will take our sequences and align them to a genome. That is to say it will find the 'best' (for a very specific definitionn of the word best) place in the genome those reads fit. It is quick, and efficeint, but may not always be the best aligner to choose for a given situation. 
+
+```samtoools``` is a set of tools for working with alignment files in sam format. We can use it to compress, sort, and index our alignment files. Bowtie2 outputs alignments in sam format so this works out nicely.
 
 To use bowtie2 we need an indexed reference genome. An index is a set of files bowtie2 uses to quickly parse the genome file. To get an index the command ```bowtie2-build``` is used like this:
 
@@ -975,7 +985,7 @@ Usage:
   specified many times.  E.g. '-U file1.fq,file2.fq -U file3.fq'.
 
  ```
-We note the top line: ```bowtie2 [options]* -x <bt2-idx> {-1 <m1> -2 <m2> | -U <r> | --interleaved <i> | -b <bam>} [-S <sam>]``` breaks down to we need to:
+We note the top line: ```bowtie2 [options]* -x <bt2-idx> {-1 <m1> -2 <m2> | -U <r> | --interleaved <i> | -b <bam>} [-S <sam>]``` shows us we need to:
    1. Specify options, these can be found in the help section.
    2. Specify input files using either the paried (-1 -2) options, single (-U), interleaved (--interleaved), or bam input. 
    3. Specify output file in sam format. If this is not specified bowtie2 will just print the output to screen.
@@ -1000,6 +1010,7 @@ The next line is our bowtie2 command: we are using the index we constructed befo
 
 Many tools expect sorted bam files as inputs, they also sometimes want indexed bam files (to make it easier to parse them) and that's what the last command is doing. **Note** you need to sort before you index.
 
+## Counting the Reads
 Now that we have aligned all our reads to the genome to finish off we will count the number of reads mapping to each gene of *A. baumannii*. The GFF file we downloaded earlier contains information about the start, end and type of feature within the reference genome. The tool ```HTSeq``` will count the reads within those specified windows, and output the count to a file. To load HTSeq on the cluster simply type:
 
 ```

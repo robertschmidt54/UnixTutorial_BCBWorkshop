@@ -999,4 +999,20 @@ Ok so what's going on here? If we look at the ```for``` loop the first line is d
 The next line is our bowtie2 command: we are using the index we constructed before, and passing our fastq file as the input. Because we didn't specify the ```-S``` option bowtie will print it's output to the screen. We can capture that output with the pipe ```|```, and use that as input into our first samtools command ```view``` view just lets us see the sam file, however the -b option will actually compress that data into what is known as a bam format. This takes up much less space than a regular sam file, and you should always compress your alignment outputs this way. We can then take the output of that and bring it into the command sort which will sort our alignment file by position in the reference genome (so posistion 1 on chromosome 1 will appear first followed by posisition 2 etc.). 
 
 Many tools expect sorted bam files as inputs, they also sometimes want indexed bam files (to make it easier to parse them) and that's what the last command is doing. **Note** you need to sort before you index.
+
+Now that we have aligned all our reads to the genome to finish off we will count the number of reads mapping to each gene of *A. baumannii*. The GFF file we downloaded earlier contains information about the start, end and type of feature within the reference genome. The tool ```HTSeq``` will count the reads within those specified windows, and output the count to a file. To load HTSeq on the cluster simply type:
+
+```
+module load py-htseq
+```
+
+The command within HTSeq to count is 
+
+```
+htseq-count
+```
+
+```htseq-count``` takes a few options the ```-f``` option specifies if the input is a bam or sam file. We are using bam files. 
+
+The ```-i``` option specifies what the ID attribute in the GFF file is. Not all GFF files use the same ID structure because reasons. So to get around that htseq lets you specify. To determine what to put there look at the last column of the GFF data, and the first atribute of that large string. Here is a picture attempting to show where to find it. In our case it is "ID" sometimes it might be "transcript_id" or "gene_id", but it will be consistent within a given GFF file.
    
